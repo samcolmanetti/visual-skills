@@ -1,8 +1,7 @@
 {
-  "name": "axton-obsidian-visual-skills",
+  "name": "visual-skills",
   "owner": {
-    "name": "Axton Liu",
-    "email": "hey@axtonliu.com"
+    "name": "Sam Colmanetti"
   },
   "metadata": {
     "description": "Visual Skills Pack for Obsidian: generate Canvas, Excalidraw, and Mermaid from text",

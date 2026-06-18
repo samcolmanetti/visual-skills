@@ -123,8 +123,8 @@ J[/Trapezoid\]
 
 **Special characters:**
 - Spaces: Use quotes if needed: `["Text with spaces"]`
-- Quotes: Replace with 『』or avoid
-- Parentheses: Replace with 「」or avoid
+- Quotes: Escape or rephrase to avoid parsing issues
+- Parentheses: Rephrase or use brackets to avoid conflicts
 - Colons: Generally safe but avoid if causing issues
 - Hyphens/dashes: Safe to use
 
@@ -419,7 +419,7 @@ graph TB
 3. Invalid Mermaid syntax
 
 **Solutions:**
-- Replace problematic characters (quotes → 『』, parens → 「」)
+- Replace problematic characters (escape quotes, rephrase parentheses)
 - Use proper node definition syntax
 - Check arrow syntax
 
@@ -480,5 +480,5 @@ Before finalizing any diagram:
 ❌ `"Display Text" --> "Other Text"`
 
 ### Safe Special Characters
-✅ `『』` for quotes, `「」` for parentheses
+✅ Escaped or rephrased quotes, brackets instead of parentheses
 ❌ `"` unescaped quotes, `()` in problematic contexts

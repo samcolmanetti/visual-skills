@@ -3,11 +3,7 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Status: Experimental](https://img.shields.io/badge/Status-Experimental-orange.svg)](#status)
 
-**[中文文档](README_CN.md)**
-
 Visual Skills Pack for Obsidian: generate Canvas, Excalidraw, and Mermaid diagrams from text with Claude Code.
-
-> **Next Step:** Want to turn Skills from demo to asset? Check out [Agent Skills Resource Library](https://www.axtonliu.ai/agent-skills) (includes slides, PDF, diagnostics)
 
 ## Demo
 
@@ -74,13 +70,12 @@ Generate hand-drawn style diagrams with three output modes:
 **Key Features:**
 - Three output modes for different use cases
 - Hand-drawn aesthetic with Excalifont (fontFamily: 5)
-- Full Chinese text support with proper character handling
 - Animation support with customizable element order
 
 **Trigger words:**
-- Obsidian: `Excalidraw`, `diagram`, `flowchart`, `mind map`, `画图`, `流程图`
-- Standard: `标准Excalidraw`, `standard excalidraw`
-- Animated: `Excalidraw动画`, `动画图`, `animate`
+- Obsidian: `Excalidraw`, `diagram`, `flowchart`, `mind map`
+- Standard: `standard excalidraw`
+- Animated: `animate`
 
 ### 2. Mermaid Visualizer
 
@@ -100,7 +95,7 @@ Transform text content into professional Mermaid diagrams optimized for presenta
 - Professional color schemes with semantic meaning
 - Compatible with Obsidian, GitHub, and other Mermaid renderers
 
-**Trigger words:** `Mermaid`, `visualize`, `flowchart`, `sequence diagram`, `可视化`
+**Trigger words:** `Mermaid`, `visualize`, `flowchart`, `sequence diagram`
 
 ### 3. Obsidian Canvas Creator
 
@@ -120,7 +115,7 @@ Create interactive Obsidian Canvas (`.canvas`) files with MindMap or freeform la
 - Proper spacing algorithms to prevent overlap
 - Group nodes for visual organization
 
-**Trigger words:** `Canvas`, `mind map`, `visual diagram`, `思维导图`
+**Trigger words:** `Canvas`, `mind map`, `visual diagram`
 
 ## Installation
 
@@ -135,7 +130,7 @@ Create interactive Obsidian Canvas (`.canvas`) files with MindMap or freeform la
 Install via Claude Code's plugin system:
 
 ```
-/plugin marketplace add axtonliu/axton-obsidian-visual-skills
+/plugin marketplace add samcolmanetti/visual-skills
 /plugin install obsidian-visual-skills
 ```
 
@@ -147,12 +142,12 @@ Copy the skill folders to your Claude Code skills directory:
 
 ```bash
 # Clone the repository
-git clone https://github.com/axtonliu/axton-obsidian-visual-skills.git
+git clone https://github.com/samcolmanetti/visual-skills.git
 
 # Copy skills to Claude Code directory
-cp -r axton-obsidian-visual-skills/excalidraw-diagram ~/.claude/skills/
-cp -r axton-obsidian-visual-skills/mermaid-visualizer ~/.claude/skills/
-cp -r axton-obsidian-visual-skills/obsidian-canvas-creator ~/.claude/skills/
+cp -r visual-skills/excalidraw-diagram ~/.claude/skills/
+cp -r visual-skills/mermaid-visualizer ~/.claude/skills/
+cp -r visual-skills/obsidian-canvas-creator ~/.claude/skills/
 ```
 
 Or copy individual skills as needed.
@@ -165,23 +160,20 @@ Once installed, Claude Code will automatically use these skills when you ask for
 # Excalidraw
 "Create an Excalidraw flowchart showing the CI/CD pipeline"
 "Draw a mind map about machine learning concepts"
-"用 Excalidraw 画一个商业模式关系图"
 
 # Mermaid
 "Visualize this process as a Mermaid diagram"
 "Create a sequence diagram for the API authentication flow"
-"把这个工作流程转成 Mermaid 图表"
 
 # Canvas
 "Turn this article into an Obsidian Canvas"
 "Create a mind map canvas for project planning"
-"把这篇文章整理成 Canvas 思维导图"
 ```
 
 ## File Structure
 
 ```
-axton-obsidian-visual-skills/
+visual-skills/
 ├── excalidraw-diagram/
 │   ├── SKILL.md              # Main skill definition
 │   ├── assets/               # Example outputs
@@ -194,31 +186,8 @@ axton-obsidian-visual-skills/
 │   ├── assets/               # Template canvas files
 │   └── references/           # Canvas spec & layout algorithms
 ├── README.md
-├── README_CN.md
 └── LICENSE
 ```
-
-## Troubleshooting
-
-### Excalidraw: Chinese text not showing as handwriting font
-
-The skill correctly sets `fontFamily: 5` (Excalifont). However, **Excalifont only covers Latin characters** — CJK handwriting font (Xiaolai) is loaded dynamically from the network.
-
-**Why it works for me:** My Chinese text displays in handwriting style because the font loads successfully from Excalidraw.com.
-
-**Why it might not work for you:**
-- Offline mode or unstable network connection
-- Cannot access Excalidraw.com (firewall, etc.)
-
-**Solutions:**
-
-**Option A (Online):** Ensure your network can access Excalidraw.com
-
-**Option B (Offline):**
-1. Download CJK font files from [Excalidraw GitHub](https://github.com/excalidraw/excalidraw/tree/master/public/fonts)
-2. Place them in your vault's `Excalidraw/CJK Fonts` folder
-3. In Excalidraw plugin settings, enable "Load Chinese fonts from file at startup"
-4. Restart Obsidian (required for settings to take effect)
 
 ## Contributing
 
@@ -238,28 +207,12 @@ This project builds upon these excellent open-source tools and specifications:
 - [Mermaid](https://mermaid.js.org/) - Diagram and chart generation
 - [JSON Canvas](https://jsoncanvas.org/) - Open file format for infinite canvas (MIT License)
 - [Obsidian](https://obsidian.md/) - Knowledge base application
+- [Axton Liu](https://github.com/axtonliu) - Original author of [axton-obsidian-visual-skills](https://github.com/axtonliu/axton-obsidian-visual-skills)
 
 ## License
 
 MIT License - see [LICENSE](LICENSE) for details.
 
----
-
 ## Author
 
-**Axton Liu** - AI Educator & Creator
-
-- Website: [axtonliu.ai](https://www.axtonliu.ai)
-- YouTube: [@AxtonLiu](https://youtube.com/@AxtonLiu)
-- Twitter/X: [@axtonliu](https://twitter.com/axtonliu)
-
-### Learn More
-
-- [MAPS™ AI Agent Course](https://www.axtonliu.ai/aiagent) - Systematic AI agent skills training
-- [Claude Skills: A Systematic Guide](https://www.axtonliu.ai/newsletters/ai-2/posts/claude-agent-skills-maps-framework) - Complete methodology
-- [AI Elite Weekly Newsletter](https://www.axtonliu.ai/newsletters/ai-2) - Weekly AI insights
-- [Free AI Course](https://www.axtonliu.ai/axton-free-course) - Get started with AI
-
----
-
-© AXTONLIU™ & AI 精英学院™ 版权所有
+**Sam Colmanetti** - [GitHub](https://github.com/samcolmanetti)

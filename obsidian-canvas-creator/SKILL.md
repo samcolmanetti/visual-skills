@@ -102,7 +102,7 @@ Before outputting:
 - All edges reference valid node IDs
 - Groups (if any) have labels
 - Colors use consistent format (hex or preset numbers)
-- JSON is properly escaped (Chinese quotes: 『』 for double, 「」 for single)
+- JSON is properly escaped (double quotes escaped as `\"`)
 
 **Output Format:**
 - Complete, valid JSON Canvas file
@@ -133,9 +133,7 @@ Use for brand consistency or specific themes. Always use uppercase format: `"#4A
 ## Critical Rules
 
 1. **Quote Handling:**
-   - Chinese double quotes → 『』
-   - Chinese single quotes → 「」
-   - English double quotes → `\"`
+   - Double quotes → `\"`
 
 2. **ID Generation:**
    - 8-12 character random hex strings

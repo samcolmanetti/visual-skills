@@ -368,22 +368,20 @@ When creating canvas files, ensure:
 - Break long text into multiple nodes
 - Use file nodes for lengthy content
 
-## Character Encoding for Chinese Content
+## Character Encoding
 
-When canvas contains Chinese text, apply these transformations:
+Double quotes in text must be escaped for valid JSON:
 
-- Chinese double quotes `"` → `『』`
-- Chinese single quotes `'` → `「」`
-- English double quotes must be escaped: `\"`
+- Double quotes must be escaped: `\"`
 
 **Example:**
 ```json
 {
-  "text": "『核心概念』包含:「子概念A」和「子概念B」"
+  "text": "\"Core Concept\" contains: \"Sub-concept A\" and \"Sub-concept B\""
 }
 ```
 
-This prevents JSON parsing errors with mixed-language content.
+This prevents JSON parsing errors.
 
 ## Performance Considerations
 
