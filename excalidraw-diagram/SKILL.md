@@ -151,9 +151,11 @@ Choose the appropriate diagram type to maximize clarity and visual appeal.
   - **Bound text needs no centering math**: text with a `containerId` (a shape or arrow label) is auto-centered and auto-sized by Excalidraw. Do not apply this formula to bound text; just bind it (see Element Binding).
 
 ### Layout & Design
-- **Canvas range**: Keep all elements within 0-1200 x 0-800
+- **Canvas range**: 0-1200 x 0-800 is a starting default, not a hard cap. If content feels cramped, **grow the canvas** rather than compressing spacing -- a larger, well-spaced diagram reads far better than a tight one.
 - **Minimum shape size**: Rectangles/ellipses containing text should be at least 120x60px
-- **Element spacing**: Minimum 20-30px gap between elements to prevent overlap
+- **Spacing between connected nodes**: Leave at least 60px of clear space between two shapes joined by an arrow, so the arrow shaft has a visible run. Arrows squeezed into a 10-20px gap are nearly invisible.
+- **Spacing between unconnected elements**: At least 40px gap between adjacent shapes that are not connected, so nothing overlaps or touches.
+- **Never overlap**: Two shapes must never share screen space. When in doubt, add more gap, not less.
 - **Clear hierarchy**: Use different colors and shapes to distinguish information levels
 - **Graphic elements**: Use rectangles, circles, arrows, and other shapes to organize information
 - **No Emoji**: Do not use any Emoji symbols in diagram text; use simple shapes (circles, squares, arrows) or color to create visual markers
@@ -442,7 +444,7 @@ Text elements (type: "text") require additional properties (do NOT include `rawT
 - **Text misalignment** — A standalone text element's `x` is the left edge, not the center. You must use the centering formula to calculate manually, or text will be off to one side
 - **Free text floating on a shape** -- A label drawn as standalone text on top of a colored box is not connected to it. Bind it: set the text's `containerId` to the shape and add the text to the shape's `boundElements` (see Element Binding)
 - **One-sided binding** -- Binding must exist on both ends. A text with `containerId` whose shape does not list it in `boundElements` (or vice versa) is a broken link and may render incorrectly
-- **Element overlap** — Elements with similar y coordinates can stack on top of each other. Check for at least 20px spacing from surrounding elements before placing new ones
+- **Element overlap** — Elements with similar coordinates can stack on top of each other. Keep at least 40px from unconnected neighbors and at least 60px between arrow-connected shapes; grow the canvas rather than compressing spacing
 - **Insufficient canvas padding** — Do not place content flush against canvas edges. Leave 50-80px padding on all sides
 - **Title not centered over diagram** — The title should be centered over the full width of the diagram below, not pinned at x=0
 - **Unbound arrows** -- An arrow positioned near two boxes but with `startBinding`/`endBinding` set to `null` is not connected; it detaches the moment a box moves. Bind both ends and add the arrow to both shapes' `boundElements` (see Element Binding)
