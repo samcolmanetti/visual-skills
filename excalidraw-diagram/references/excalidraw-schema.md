@@ -207,20 +207,55 @@ Do **not** add metadata fields (`frameId`, `index`, `versionNonce`, `rawText`) t
 
 ## Arrow Binding
 
-To connect arrows to shapes:
+An arrow connecting two shapes binds to both. The arrow carries `startBinding`/`endBinding`, and **both** shapes list the arrow in their `boundElements` (this is the reciprocal half -- without it the binding is broken).
+
+The arrow:
 
 ```json
 {
   "type": "arrow",
-  "startBinding": {
-    "elementId": "source-shape-id",
-    "focus": 0,
-    "gap": 5
-  },
-  "endBinding": {
-    "elementId": "target-shape-id",
-    "focus": 0,
-    "gap": 5
-  }
+  "id": "arrow-1",
+  "startBinding": { "elementId": "source-shape-id", "focus": 0, "gap": 4 },
+  "endBinding": { "elementId": "target-shape-id", "focus": 0, "gap": 4 },
+  "startArrowhead": null,
+  "endArrowhead": "arrow",
+  "boundElements": null
 }
 ```
+
+Both shapes reference the arrow back:
+
+```json
+{ "id": "source-shape-id", "boundElements": [{ "type": "arrow", "id": "arrow-1" }] }
+```
+```json
+{ "id": "target-shape-id", "boundElements": [{ "type": "arrow", "id": "arrow-1" }] }
+```
+
+Field meanings:
+- `elementId` -- id of the shape this endpoint attaches to
+- `focus` -- roughly -1..1, where the arrow aims along the shape (0 = center)
+- `gap` -- px distance kept between the arrow endpoint and the shape edge
+
+Use `startBinding`/`endBinding` in raw `.excalidraw` JSON. The `start`/`end` shorthand exists only in the `convertToExcalidrawElements` skeleton API and is invalid in saved files.
+
+## Arrow Labels
+
+An arrow label is text bound to the arrow via the same container mechanism as text-in-a-shape: the label sets `containerId` to the arrow id, and the arrow lists the label in `boundElements`.
+
+```json
+{ "id": "arrow-1", "type": "arrow", "boundElements": [{ "type": "text", "id": "arrow-1-label" }] }
+```
+```json
+{
+  "id": "arrow-1-label",
+  "type": "text",
+  "containerId": "arrow-1",
+  "text": "calls",
+  "textAlign": "center",
+  "verticalAlign": "middle",
+  "backgroundColor": "transparent"
+}
+```
+
+When an arrow both connects shapes and carries a label, its `boundElements` holds only the label (the arrow is the connector, not a connection target), while the two shapes' `boundElements` hold the arrow.

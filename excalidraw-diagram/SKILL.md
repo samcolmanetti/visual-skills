@@ -323,6 +323,45 @@ To put a label inside a rectangle, ellipse, or diamond, create the text as a sep
 
 Bound text is auto-centered and auto-sized inside the shape, so you do **not** apply the standalone-text centering formula to it. Give the text roughly the shape's position; Excalidraw snaps it to the center.
 
+### Arrows between shapes (connectors)
+
+An arrow that connects two shapes must bind to both, so it stays attached when shapes move. The arrow gets `startBinding` and `endBinding`; **both** connected shapes list the arrow in their `boundElements`.
+
+- The **arrow**:
+  ```json
+  {
+    "id": "arrow-1",
+    "type": "arrow",
+    "startBinding": { "elementId": "box1", "focus": 0, "gap": 4 },
+    "endBinding": { "elementId": "box2", "focus": 0, "gap": 4 },
+    "startArrowhead": null,
+    "endArrowhead": "arrow",
+    "boundElements": null
+  }
+  ```
+- **Both shapes** include the arrow in `boundElements` (alongside any text label):
+  ```json
+  { "id": "box1", "boundElements": [{ "type": "text", "id": "box1-label" }, { "type": "arrow", "id": "arrow-1" }] }
+  ```
+  ```json
+  { "id": "box2", "boundElements": [{ "type": "text", "id": "box2-label" }, { "type": "arrow", "id": "arrow-1" }] }
+  ```
+
+`focus` is roughly -1..1 (0 = aim at the shape center); `gap` is the px distance kept from the shape's edge. Use `startBinding`/`endBinding` -- the `start`/`end` shorthand is only valid in the higher-level skeleton API, not in raw `.excalidraw` JSON.
+
+### Labels on arrows
+
+An arrow label is text bound to the arrow, exactly like text inside a shape -- the label gets `containerId: "<arrow-id>"` and the arrow lists it in `boundElements`. This keeps the label centered on the arrow instead of floating beside it.
+
+```json
+{ "id": "arrow-1", "type": "arrow", "boundElements": [{ "type": "text", "id": "arrow-1-label" }] }
+```
+```json
+{ "id": "arrow-1-label", "type": "text", "containerId": "arrow-1", "text": "calls", "textAlign": "center", "verticalAlign": "middle", "backgroundColor": "transparent" }
+```
+
+Keep arrow labels short (one or two words) so they fit on the arrow.
+
 See [references/excalidraw-schema.md](references/excalidraw-schema.md) for the full binding reference.
 
 ---
@@ -406,7 +445,10 @@ Text elements (type: "text") require additional properties (do NOT include `rawT
 - **Element overlap** — Elements with similar y coordinates can stack on top of each other. Check for at least 20px spacing from surrounding elements before placing new ones
 - **Insufficient canvas padding** — Do not place content flush against canvas edges. Leave 50-80px padding on all sides
 - **Title not centered over diagram** — The title should be centered over the full width of the diagram below, not pinned at x=0
-- **Arrow label overflow** — Long text labels (e.g., "ATP + NADPH") can exceed short arrows. Keep labels short or increase arrow length
+- **Unbound arrows** -- An arrow positioned near two boxes but with `startBinding`/`endBinding` set to `null` is not connected; it detaches the moment a box moves. Bind both ends and add the arrow to both shapes' `boundElements` (see Element Binding)
+- **Floating arrow labels** -- Label text placed beside an arrow as standalone text is not attached. Bind it: set the label's `containerId` to the arrow and list it in the arrow's `boundElements`
+- **Using `start`/`end` for arrow binding** -- Those keys are skeleton-API only and invalid in raw `.excalidraw` JSON. Use `startBinding`/`endBinding` with `elementId`/`focus`/`gap`
+- **Arrow label overflow** — Long bound labels (e.g., "ATP + NADPH") can exceed short arrows. Keep labels short (one or two words) or increase arrow length
 - **Insufficient contrast** — Light-colored text on a white background is nearly invisible. Text color must be no lighter than `#757575`; for colored text use dark variants
 - **Font size too small** — Below 14px text is unreadable at normal zoom; body text minimum is 16px
 - **Non-ASCII brackets**: Do not use `「」`, `【】`, `（）`, or other CJK/fullwidth bracket glyphs in text. Use ASCII `()` or `[]` only
