@@ -156,9 +156,11 @@
 
 ## Roundness Types
 
-- `{ "type": 1 }` - Sharp corners
+- `null` - Sharp corners. **Required** for shapes holding dense top-left-aligned text (tables, cards, schema/ERD boxes) -- a corner radius clips the first and last rows.
 - `{ "type": 2 }` - Slight rounding
-- `{ "type": 3 }` - Full rounding (recommended)
+- `{ "type": 3 }` - Full rounding. Use for shapes with short centered labels (nodes, simple boxes), where the label sits clear of the corners.
+
+Match roundness to content: rounded for short centered labels, sharp (`null`) for dense text.
 
 ## Element Binding
 

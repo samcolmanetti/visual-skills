@@ -2,7 +2,7 @@
 name: excalidraw-diagram
 description: Generate Excalidraw diagrams from text content. Supports three output modes - Obsidian (.md), Standard (.excalidraw), and Animated (.excalidraw with animation order). Triggers on "Excalidraw", "diagram", "flowchart", "mind map", "visualize", "standard excalidraw", "animate".
 metadata:
-  version: 1.3.0
+  version: 1.4.0
 ---
 
 # Excalidraw Diagram Generator
@@ -137,12 +137,13 @@ Choose the appropriate diagram type to maximize clarity and visual appeal.
 - **All text elements must use** `fontFamily: 5` (Excalifont handwriting font)
 - **Double quotes in text**: escape as `\"` in JSON text fields
 - **Brackets must be ASCII**: use `(` `)` or `[` `]` only. Never use CJK/fullwidth bracket glyphs such as `「` `」`, `【` `】`, `（` `）`, `『` `』`, or `《` `》`. They render as foreign punctuation and look out of place in English diagrams.
-- **Font size rules** (hard minimums — below these values text is unreadable at normal zoom):
+- **Font size rules** (minimums for readability at normal zoom):
   - Title: 20-28px (minimum 20px)
   - Subtitle: 18-20px
   - Body/labels: 16-18px (minimum 16px)
   - Minor annotations: 14px (only for unimportant supplementary notes, use sparingly)
-  - **Absolutely no text below 14px**
+  - Dense reference text (table column lists, multi-line stage descriptions, code-like detail that is scanned rather than read as prose): 12-13px is acceptable, since shrinking it lets the block stay readable as a unit. Never below 12px.
+  - **Prose and standalone labels: no smaller than 14px**
 - **Line height**: All text uses `lineHeight: 1.25`
 - **Text centering estimation** (standalone text only): Standalone text elements (`containerId: null`) have no auto-centering; manually calculate the x coordinate:
   - Estimate text width: `estimatedWidth = text.length * fontSize * 0.5`
@@ -156,6 +157,7 @@ Choose the appropriate diagram type to maximize clarity and visual appeal.
 - **Spacing between connected nodes**: Leave at least 60px of clear space between two shapes joined by an arrow, so the arrow shaft has a visible run. Arrows squeezed into a 10-20px gap are nearly invisible.
 - **Spacing between unconnected elements**: At least 40px gap between adjacent shapes that are not connected, so nothing overlaps or touches.
 - **Never overlap**: Two shapes must never share screen space. When in doubt, add more gap, not less.
+- **Corners vs content**: Use rounded corners (`roundness: {"type": 3}`) only for shapes with short centered labels. Shapes holding dense top-left text (tables, cards) need sharp corners (`roundness: null`), or the corner radius clips the first/last rows. See Element Binding.
 - **Clear hierarchy**: Use different colors and shapes to distinguish information levels
 - **Graphic elements**: Use rectangles, circles, arrows, and other shapes to organize information
 - **No Emoji**: Do not use any Emoji symbols in diagram text; use simple shapes (circles, squares, arrows) or color to create visual markers
@@ -325,6 +327,20 @@ To put a label inside a rectangle, ellipse, or diamond, create the text as a sep
 
 Bound text is auto-centered and auto-sized inside the shape, so you do **not** apply the standalone-text centering formula to it. Give the text roughly the shape's position; Excalidraw snaps it to the center.
 
+**Match the shape to its text** -- both alignment and corner style follow the same distinction:
+- **Short labels** (a node name, one or two lines): `textAlign: "center"`, `verticalAlign: "middle"`, and rounded corners (`roundness: {"type": 3}`) are fine -- the label sits clear of the corners.
+- **Dense multi-line text** (a paragraph, a column list, a stage description): `textAlign: "left"`, `verticalAlign: "top"`, and **sharp corners** (`roundness: null`). A corner radius clips the first and last rows of top-left text, and centering a block of technical text is hard to read.
+
+### Title + body cards (header over content)
+
+A container holds **exactly one** bound text, so you cannot make one line a bold title and the rest a body inside a single box. To show a heading above content, stack **two bound containers** sharing an edge -- a header and a body:
+
+- **Header** rectangle: solid/dark fill, the title bound with `textAlign: "center"`, `verticalAlign: "middle"`, light text. Small height (~32px).
+- **Body** rectangle: directly below (its `y` = header `y` + header `height`), lighter fill, the description bound with `textAlign: "left"`, `verticalAlign: "top"`.
+- Both use `roundness: null` so they read as one clean card and the body text does not clip.
+
+This is the pattern for process stages (a named step with a description) and for database/ERD tables (a table name over its column list).
+
 ### Arrows between shapes (connectors)
 
 An arrow that connects two shapes must bind to both, so it stays attached when shapes move. The arrow gets `startBinding` and `endBinding`; **both** connected shapes list the arrow in their `boundElements`.
@@ -351,6 +367,14 @@ An arrow that connects two shapes must bind to both, so it stays attached when s
 
 `focus` is roughly -1..1 (0 = aim at the shape center); `gap` is the px distance kept from the shape's edge. Use `startBinding`/`endBinding` -- the `start`/`end` shorthand is only valid in the higher-level skeleton API, not in raw `.excalidraw` JSON.
 
+**Route long arrows with intermediate points.** An arrow's `points` array can have more than two entries. When a connector would otherwise cut diagonally across other shapes (e.g. a lower box calling a box near the top of another column), add bend points so it travels through the empty gap ("channel") between columns instead:
+```json
+{ "id": "arrow-2", "type": "arrow", "points": [[0,0],[60,0],[60,-200],[180,-200]],
+  "startBinding": { "elementId": "boxA", "focus": 0, "gap": 4 },
+  "endBinding": { "elementId": "boxB", "focus": 0, "gap": 4 } }
+```
+This goes right into the channel, up to the target's row, then right into it -- staying clear of the boxes in between. Bindings still attach to both ends.
+
 ### Labels on arrows
 
 An arrow label is text bound to the arrow, exactly like text inside a shape -- the label gets `containerId: "<arrow-id>"` and the arrow lists it in `boundElements`. This keeps the label centered on the arrow instead of floating beside it.
@@ -368,7 +392,7 @@ See [references/excalidraw-schema.md](references/excalidraw-schema.md) for the f
 
 ### Reference Example
 
-[assets/example-flowchart.excalidraw](assets/example-flowchart.excalidraw) is a verified Standard-mode diagram that demonstrates every rule above: text bound inside each shape, arrows bound to both endpoints with reciprocal `boundElements`, bound arrow labels, ASCII brackets in node text (`(auth)`, `[core]`), and generous spacing. Mirror its structure when generating diagrams.
+[assets/example-flowchart.excalidraw](assets/example-flowchart.excalidraw) is a verified Standard-mode diagram demonstrating the core binding rules: text bound inside each shape, arrows bound to both endpoints with reciprocal `boundElements`, bound arrow labels, ASCII brackets in node text (`(auth)`, `[core]`), and generous spacing. Mirror its structure when generating diagrams. (For title+body cards, dense-text tables, and multi-point arrow routing, follow the guidance above -- the example keeps to simple rounded nodes.)
 
 ---
 
@@ -454,6 +478,8 @@ Text elements (type: "text") require additional properties (do NOT include `rawT
 - **Unbound arrows** -- An arrow positioned near two boxes but with `startBinding`/`endBinding` set to `null` is not connected; it detaches the moment a box moves. Bind both ends and add the arrow to both shapes' `boundElements` (see Element Binding)
 - **Floating arrow labels** -- Label text placed beside an arrow as standalone text is not attached. Bind it: set the label's `containerId` to the arrow and list it in the arrow's `boundElements`
 - **Using `start`/`end` for arrow binding** -- Those keys are skeleton-API only and invalid in raw `.excalidraw` JSON. Use `startBinding`/`endBinding` with `elementId`/`focus`/`gap`
+- **Clipped text in rounded boxes** -- A table or dense card with `roundness: {"type": 3}` cuts off its first and last rows. Use `roundness: null` for any shape with top-left-aligned multi-line text
+- **Relying on element ids across an app round-trip** -- The Excalidraw app rewrites element ids when a file is opened and re-saved. When regenerating or patching an existing `.excalidraw` file, match elements by bound text content or position, not by the human-readable ids you originally wrote -- they may have been replaced
 - **Arrow label overflow**: Long bound labels (e.g., "ATP + NADPH") can exceed short arrows. Keep labels short (one or two words) or increase arrow length
 - **Insufficient contrast** — Light-colored text on a white background is nearly invisible. Text color must be no lighter than `#757575`; for colored text use dark variants
 - **Font size too small** — Below 14px text is unreadable at normal zoom; body text minimum is 16px
