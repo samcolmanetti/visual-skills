@@ -144,10 +144,11 @@ Choose the appropriate diagram type to maximize clarity and visual appeal.
   - Minor annotations: 14px (only for unimportant supplementary notes, use sparingly)
   - **Absolutely no text below 14px**
 - **Line height**: All text uses `lineHeight: 1.25`
-- **Text centering estimation**: Standalone text elements have no auto-centering; manually calculate the x coordinate:
+- **Text centering estimation** (standalone text only): Standalone text elements (`containerId: null`) have no auto-centering; manually calculate the x coordinate:
   - Estimate text width: `estimatedWidth = text.length * fontSize * 0.5`
   - Centering formula: `x = centerX - estimatedWidth / 2`
   - Example: text "Hello" (5 chars, fontSize 20) centered at x=300 -> `estimatedWidth = 5 * 20 * 0.5 = 50` -> `x = 300 - 25 = 275`
+  - **Bound text needs no centering math**: text with a `containerId` (a shape or arrow label) is auto-centered and auto-sized by Excalidraw. Do not apply this formula to bound text; just bind it (see Element Binding).
 
 ### Layout & Design
 - **Canvas range**: Keep all elements within 0-1200 x 0-800
@@ -224,7 +225,9 @@ Reference: [references/excalidraw-schema.md](references/excalidraw-schema.md)
 
 ## Element Template
 
-Each element requires these fields (do NOT add extra fields like `frameId`, `index`, `versionNonce`, `rawText` -- they may cause issues on excalidraw.com. `boundElements` must be `null` not `[]`, `updated` must be `1` not timestamps):
+Each element requires these fields. Do NOT add these metadata fields: `frameId`, `index`, `versionNonce`, `rawText` -- they cause "invalid file" errors on excalidraw.com v0.17.0+. Set `updated: 1` (not timestamps).
+
+**Binding fields are required when elements connect, not forbidden.** `boundElements` is `null` only when nothing is bound to the element; when a shape holds a text label or is touched by an arrow, it must be a populated array. A text element's `containerId` is `null` only for standalone text; text bound inside a shape (or an arrow) sets it to that container's id. See the **Element Binding** section below -- binding is what attaches labels to boxes and arrows to shapes.
 
 ```json
 {
@@ -288,6 +291,42 @@ See [references/excalidraw-schema.md](references/excalidraw-schema.md) for all e
 
 ---
 
+## Element Binding
+
+Binding is what turns scattered shapes, text, and arrows into a connected diagram. Without it, text just floats on top of a colored square and arrows are loose lines that detach the moment anything moves. **Always bind**: every label belongs inside its shape, and every connector binds to the shapes it joins. Bindings are **bidirectional** -- both sides must reference each other, or the link silently breaks.
+
+### Text inside a shape (labels)
+
+To put a label inside a rectangle, ellipse, or diamond, create the text as a separate element bound to the shape -- do not just position free text on top of it.
+
+- The **shape** lists the text in `boundElements`:
+  ```json
+  { "id": "box1", "type": "rectangle", "boundElements": [{ "type": "text", "id": "box1-label" }] }
+  ```
+- The **text** points back via `containerId` and uses centered alignment:
+  ```json
+  {
+    "id": "box1-label",
+    "type": "text",
+    "containerId": "box1",
+    "text": "User Service",
+    "textAlign": "center",
+    "verticalAlign": "middle",
+    "backgroundColor": "transparent",
+    "fontSize": 18,
+    "fontFamily": 5,
+    "autoResize": true,
+    "lineHeight": 1.25,
+    "originalText": "User Service"
+  }
+  ```
+
+Bound text is auto-centered and auto-sized inside the shape, so you do **not** apply the standalone-text centering formula to it. Give the text roughly the shape's position; Excalidraw snaps it to the center.
+
+See [references/excalidraw-schema.md](references/excalidraw-schema.md) for the full binding reference.
+
+---
+
 ## Additional Technical Requirements
 
 ### Text Elements Handling
@@ -302,7 +341,7 @@ See [references/excalidraw-schema.md](references/excalidraw-schema.md) for all e
 
 ### Required Fields for All Elements
 
-**IMPORTANT**: Do NOT include `frameId`, `index`, `versionNonce`, or `rawText` fields. Use `boundElements: null` (not `[]`), and `updated: 1` (not timestamps).
+**IMPORTANT**: Do NOT include the metadata fields `frameId`, `index`, `versionNonce`, or `rawText` -- they cause "invalid file" errors on excalidraw.com v0.17.0+. Set `updated: 1` (not timestamps). `boundElements` is `null` for unbound elements but a populated array for bound ones (see **Element Binding**); these are valid binding fields, not the metadata fields above.
 
 ```json
 {
@@ -362,6 +401,8 @@ Text elements (type: "text") require additional properties (do NOT include `rawT
 ## Common Mistakes to Avoid
 
 - **Text misalignment** — A standalone text element's `x` is the left edge, not the center. You must use the centering formula to calculate manually, or text will be off to one side
+- **Free text floating on a shape** -- A label drawn as standalone text on top of a colored box is not connected to it. Bind it: set the text's `containerId` to the shape and add the text to the shape's `boundElements` (see Element Binding)
+- **One-sided binding** -- Binding must exist on both ends. A text with `containerId` whose shape does not list it in `boundElements` (or vice versa) is a broken link and may render incorrectly
 - **Element overlap** — Elements with similar y coordinates can stack on top of each other. Check for at least 20px spacing from surrounding elements before placing new ones
 - **Insufficient canvas padding** — Do not place content flush against canvas edges. Leave 50-80px padding on all sides
 - **Title not centered over diagram** — The title should be centered over the full width of the diagram below, not pinned at x=0

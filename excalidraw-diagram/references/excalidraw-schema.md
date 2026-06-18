@@ -162,13 +162,29 @@
 
 ## Element Binding
 
-To connect text to a container:
+Binding is **bidirectional** and **required** for connected diagrams: each side must reference the other, or the link breaks. `boundElements` is `null` (or omitted) only when an element has nothing bound to it; once a shape holds a label or is touched by an arrow, it must be a populated array. Do not draw free text on top of a shape and call it a label -- bind it.
+
+A shape's `boundElements` may hold multiple entries at once -- one text label plus any number of arrows:
+
+```json
+{
+  "id": "shape-1",
+  "boundElements": [
+    { "type": "text", "id": "shape-1-label" },
+    { "type": "arrow", "id": "arrow-1" }
+  ]
+}
+```
+
+### Text inside a container (labels)
+
+The container lists the text; the text points back via `containerId` and uses centered alignment with a transparent background. Bound text is auto-centered/auto-sized by Excalidraw, so it does not need manual x-centering.
 
 ```json
 {
   "type": "rectangle",
   "id": "container-id",
-  "boundElements": [{ "id": "text-id", "type": "text" }]
+  "boundElements": [{ "type": "text", "id": "text-id" }]
 }
 ```
 
@@ -176,9 +192,18 @@ To connect text to a container:
 {
   "type": "text",
   "id": "text-id",
-  "containerId": "container-id"
+  "containerId": "container-id",
+  "text": "Label",
+  "textAlign": "center",
+  "verticalAlign": "middle",
+  "backgroundColor": "transparent",
+  "autoResize": true,
+  "lineHeight": 1.25,
+  "originalText": "Label"
 }
 ```
+
+Do **not** add metadata fields (`frameId`, `index`, `versionNonce`, `rawText`) to bound elements -- they cause "invalid file" errors on excalidraw.com v0.17.0+. `boundElements` arrays, `containerId`, `startBinding`, and `endBinding` are valid binding fields and are safe to use.
 
 ## Arrow Binding
 
