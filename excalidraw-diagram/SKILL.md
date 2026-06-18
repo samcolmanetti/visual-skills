@@ -2,7 +2,7 @@
 name: excalidraw-diagram
 description: Generate Excalidraw diagrams from text content. Supports three output modes - Obsidian (.md), Standard (.excalidraw), and Animated (.excalidraw with animation order). Triggers on "Excalidraw", "diagram", "flowchart", "mind map", "visualize", "standard excalidraw", "animate".
 metadata:
-  version: 1.2.1
+  version: 1.3.0
 ---
 
 # Excalidraw Diagram Generator
@@ -366,6 +366,10 @@ Keep arrow labels short (one or two words) so they fit on the arrow.
 
 See [references/excalidraw-schema.md](references/excalidraw-schema.md) for the full binding reference.
 
+### Reference Example
+
+[assets/example-flowchart.excalidraw](assets/example-flowchart.excalidraw) is a verified Standard-mode diagram that demonstrates every rule above: text bound inside each shape, arrows bound to both endpoints with reciprocal `boundElements`, bound arrow labels, ASCII brackets in node text (`(auth)`, `[core]`), and generous spacing. Mirror its structure when generating diagrams.
+
 ---
 
 ## Additional Technical Requirements
@@ -444,13 +448,13 @@ Text elements (type: "text") require additional properties (do NOT include `rawT
 - **Text misalignment** — A standalone text element's `x` is the left edge, not the center. You must use the centering formula to calculate manually, or text will be off to one side
 - **Free text floating on a shape** -- A label drawn as standalone text on top of a colored box is not connected to it. Bind it: set the text's `containerId` to the shape and add the text to the shape's `boundElements` (see Element Binding)
 - **One-sided binding** -- Binding must exist on both ends. A text with `containerId` whose shape does not list it in `boundElements` (or vice versa) is a broken link and may render incorrectly
-- **Element overlap** — Elements with similar coordinates can stack on top of each other. Keep at least 40px from unconnected neighbors and at least 60px between arrow-connected shapes; grow the canvas rather than compressing spacing
+- **Element overlap**: Elements with similar coordinates can stack on top of each other. Keep at least 40px from unconnected neighbors and at least 60px between arrow-connected shapes; grow the canvas rather than compressing spacing
 - **Insufficient canvas padding** — Do not place content flush against canvas edges. Leave 50-80px padding on all sides
 - **Title not centered over diagram** — The title should be centered over the full width of the diagram below, not pinned at x=0
 - **Unbound arrows** -- An arrow positioned near two boxes but with `startBinding`/`endBinding` set to `null` is not connected; it detaches the moment a box moves. Bind both ends and add the arrow to both shapes' `boundElements` (see Element Binding)
 - **Floating arrow labels** -- Label text placed beside an arrow as standalone text is not attached. Bind it: set the label's `containerId` to the arrow and list it in the arrow's `boundElements`
 - **Using `start`/`end` for arrow binding** -- Those keys are skeleton-API only and invalid in raw `.excalidraw` JSON. Use `startBinding`/`endBinding` with `elementId`/`focus`/`gap`
-- **Arrow label overflow** — Long bound labels (e.g., "ATP + NADPH") can exceed short arrows. Keep labels short (one or two words) or increase arrow length
+- **Arrow label overflow**: Long bound labels (e.g., "ATP + NADPH") can exceed short arrows. Keep labels short (one or two words) or increase arrow length
 - **Insufficient contrast** — Light-colored text on a white background is nearly invisible. Text color must be no lighter than `#757575`; for colored text use dark variants
 - **Font size too small** — Below 14px text is unreadable at normal zoom; body text minimum is 16px
 - **Non-ASCII brackets**: Do not use `「」`, `【】`, `（）`, or other CJK/fullwidth bracket glyphs in text. Use ASCII `()` or `[]` only
