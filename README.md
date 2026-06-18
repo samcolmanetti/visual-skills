@@ -3,216 +3,89 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Status: Experimental](https://img.shields.io/badge/Status-Experimental-orange.svg)](#status)
 
-Visual Skills Pack for Obsidian: generate Canvas, Excalidraw, and Mermaid diagrams from text with Claude Code.
+Claude Code skills that generate **Excalidraw**, **Mermaid**, and **Obsidian Canvas** diagrams from text.
 
-## Demo
-
-<table>
-<tr>
-<td align="center"><strong>Excalidraw</strong></td>
-<td align="center"><strong>Mermaid</strong></td>
-<td align="center"><strong>Canvas</strong></td>
-</tr>
-<tr>
-<td><img src="assets/excalidraw-demo.png" width="280" alt="Excalidraw Demo"></td>
-<td><img src="assets/mermaid-demo.png" width="280" alt="Mermaid Demo"></td>
-<td><img src="assets/canvas-demo.png" width="280" alt="Canvas Demo"></td>
-</tr>
-<tr>
-<td align="center"><em>Hand-drawn style</em></td>
-<td align="center"><em>Hierarchical flowchart</em></td>
-<td align="center"><em>Colorful card layout</em></td>
-</tr>
-</table>
-
-### Video Demo
-
-[![Watch the demo](https://img.youtube.com/vi/TUJ_3G1cylc/maxresdefault.jpg)](https://youtu.be/TUJ_3G1cylc)
+> Forked from [axton-obsidian-visual-skills](https://github.com/axtonliu/axton-obsidian-visual-skills) by [Axton Liu](https://github.com/axtonliu) and localized to English. The original repo has a video walkthrough and demo images.
 
 ## Status
 
-> **Status: Experimental**
->
-> - This is a public prototype that works for my demos, but does not yet cover all input scales and edge cases.
-> - Output quality varies based on model version and input structure; results may fluctuate.
-> - My primary focus is demonstrating how tools and systems work together, not maintaining this codebase.
-> - If you encounter issues, please submit a reproducible case (input + output file + steps to reproduce).
+Experimental prototype. It works well for common cases, but output quality varies with model version and input structure. Bug reports with a reproducible case (input + output file + steps) are welcome; feature requests may not be acted on.
 
-## What Are Skills?
+## Skills
 
-Skills are prompt-based extensions for [Claude Code](https://docs.anthropic.com/en/docs/claude-code) that give Claude specialized capabilities. Unlike MCP servers that require complex setup, skills are simple markdown files that Claude loads on demand.
+### Excalidraw Diagram Generator
 
-## Included Skills
+Hand-drawn style diagrams (Excalifont) with bound elements and three output modes:
 
-### 1. Excalidraw Diagram Generator
+| Mode | Output | Use |
+|------|--------|-----|
+| **Obsidian** (default) | `.md` | Open in Obsidian |
+| **Standard** | `.excalidraw` | Open/share on excalidraw.com |
+| **Animated** | `.excalidraw` | Animate via [excalidraw-animate](https://dai-shi.github.io/excalidraw-animate/) |
 
-Generate hand-drawn style diagrams with three output modes:
+Diagram types: flowchart, mind map, hierarchy, relationship, comparison, timeline, matrix, freeform.
+Triggers: `Excalidraw`, `diagram`, `flowchart`, `mind map`; `standard excalidraw`; `animate`.
 
-| Mode | Output | Use Case |
-|------|--------|----------|
-| **Obsidian** (default) | `.md` | Open directly in Obsidian |
-| **Standard** | `.excalidraw` | Open/edit/share on excalidraw.com |
-| **Animated** | `.excalidraw` | Generate animations with [excalidraw-animate](https://dai-shi.github.io/excalidraw-animate/) |
+### Mermaid Visualizer
 
-**Supported Diagram Types:**
+Mermaid diagrams with built-in syntax-error prevention (list conflicts, subgraph naming, special characters) and configurable layouts.
 
-| Type | Best For |
-|------|----------|
-| **Flowchart** | Step-by-step processes, workflows, task sequences |
-| **Mind Map** | Concept expansion, topic categorization, brainstorming |
-| **Hierarchy** | Org charts, content levels, system decomposition |
-| **Relationship** | Dependencies, influences, interactions between elements |
-| **Comparison** | Side-by-side analysis of approaches or options |
-| **Timeline** | Event progression, project milestones, evolution |
-| **Matrix** | 2D categorization, priority grids, positioning |
-| **Freeform** | Scattered ideas, initial exploration, free-form notes |
+Diagram types: process flow, circular flow, comparison, mindmap, sequence, state.
+Triggers: `Mermaid`, `visualize`, `flowchart`, `sequence diagram`.
 
-**Key Features:**
-- Three output modes for different use cases
-- Hand-drawn aesthetic with Excalifont (fontFamily: 5)
-- Animation support with customizable element order
+### Obsidian Canvas Creator
 
-**Trigger words:**
-- Obsidian: `Excalidraw`, `diagram`, `flowchart`, `mind map`
-- Standard: `standard excalidraw`
-- Animated: `animate`
+Valid JSON Canvas (`.canvas`) files with smart node sizing, labeled edges, color-coded nodes, and overlap-avoiding spacing.
 
-### 2. Mermaid Visualizer
-
-Transform text content into professional Mermaid diagrams optimized for presentations and documentation. Includes built-in syntax error prevention for common pitfalls.
-
-**Supported Diagram Types:**
-- **Process Flow** (graph TB/LR) - Workflows, decision trees, AI agent architectures
-- **Circular Flow** - Cyclic processes, feedback loops, continuous improvement
-- **Comparison Diagram** - Before/after, A vs B analysis, traditional vs modern
-- **Mindmap** - Hierarchical concepts, knowledge organization
-- **Sequence Diagram** - Component interactions, API calls, message flows
-- **State Diagram** - System states, status transitions, lifecycle stages
-
-**Key Features:**
-- Built-in syntax error prevention (list conflicts, subgraph naming, special characters)
-- Configurable layouts: vertical/horizontal, simple/standard/detailed
-- Professional color schemes with semantic meaning
-- Compatible with Obsidian, GitHub, and other Mermaid renderers
-
-**Trigger words:** `Mermaid`, `visualize`, `flowchart`, `sequence diagram`
-
-### 3. Obsidian Canvas Creator
-
-Create interactive Obsidian Canvas (`.canvas`) files with MindMap or freeform layouts. Outputs valid JSON Canvas format that opens directly in Obsidian.
-
-**Layout Modes:**
-
-| Mode | Structure | Best For |
-|------|-----------|----------|
-| **MindMap** | Radial hierarchy from center | Brainstorming, topic exploration, hierarchical content |
-| **Freeform** | Custom positioning, flexible connections | Complex networks, non-hierarchical content, custom arrangements |
-
-**Key Features:**
-- Smart node sizing based on content length
-- Automatic edge creation with labeled relationships
-- Color-coded nodes (6 preset colors + custom hex)
-- Proper spacing algorithms to prevent overlap
-- Group nodes for visual organization
-
-**Trigger words:** `Canvas`, `mind map`, `visual diagram`
+Layouts: MindMap (radial hierarchy) or Freeform (custom positioning).
+Triggers: `Canvas`, `mind map`, `visual diagram`.
 
 ## Installation
 
-### Prerequisites
+Requires the [Claude Code CLI](https://docs.anthropic.com/en/docs/claude-code). The Excalidraw skill's Obsidian mode also needs the [Excalidraw plugin](https://github.com/zsviczian/obsidian-excalidraw-plugin).
 
-- [Claude Code CLI](https://docs.anthropic.com/en/docs/claude-code) installed
-- [Obsidian](https://obsidian.md/) with relevant plugins:
-  - [Excalidraw plugin](https://github.com/zsviczian/obsidian-excalidraw-plugin) (for Excalidraw skill)
-
-### Option A: Plugin Marketplace (Recommended)
-
-Install via Claude Code's plugin system:
+**Plugin marketplace (recommended):**
 
 ```
 /plugin marketplace add samcolmanetti/visual-skills
 /plugin install obsidian-visual-skills
 ```
 
-Then restart Claude Code to load the skills.
+Restart Claude Code to load the skills.
 
-### Option B: Manual Installation
-
-Copy the skill folders to your Claude Code skills directory:
+**Manual:**
 
 ```bash
-# Clone the repository
 git clone https://github.com/samcolmanetti/visual-skills.git
-
-# Copy skills to Claude Code directory
-cp -r visual-skills/excalidraw-diagram ~/.claude/skills/
-cp -r visual-skills/mermaid-visualizer ~/.claude/skills/
-cp -r visual-skills/obsidian-canvas-creator ~/.claude/skills/
+cp -r visual-skills/{excalidraw-diagram,mermaid-visualizer,obsidian-canvas-creator} ~/.claude/skills/
 ```
-
-Or copy individual skills as needed.
 
 ## Usage
 
-Once installed, Claude Code will automatically use these skills when you ask for visualizations:
+Claude Code uses these skills automatically when you ask for a visualization:
 
 ```
-# Excalidraw
 "Create an Excalidraw flowchart showing the CI/CD pipeline"
-"Draw a mind map about machine learning concepts"
-
-# Mermaid
-"Visualize this process as a Mermaid diagram"
-"Create a sequence diagram for the API authentication flow"
-
-# Canvas
+"Visualize this process as a Mermaid sequence diagram"
 "Turn this article into an Obsidian Canvas"
-"Create a mind map canvas for project planning"
 ```
 
 ## File Structure
 
 ```
 visual-skills/
-├── excalidraw-diagram/
-│   ├── SKILL.md              # Main skill definition
-│   ├── assets/               # Example outputs
-│   └── references/           # Excalidraw JSON schema
-├── mermaid-visualizer/
-│   ├── SKILL.md
-│   └── references/           # Syntax rules & error prevention
-├── obsidian-canvas-creator/
-│   ├── SKILL.md
-│   ├── assets/               # Template canvas files
-│   └── references/           # Canvas spec & layout algorithms
+├── excalidraw-diagram/     # SKILL.md, references/ (JSON schema), assets/ (example)
+├── mermaid-visualizer/     # SKILL.md, references/ (syntax rules)
+├── obsidian-canvas-creator/ # SKILL.md, references/, assets/ (templates)
 ├── README.md
 └── LICENSE
 ```
 
-## Contributing
-
-Contributions welcome (low-maintenance project):
-
-- Reproducible bug reports (input + output + steps + environment)
-- Documentation improvements
-- Small PRs (fixes/docs)
-
-> **Note:** Feature requests may not be acted on due to limited maintenance capacity.
-
 ## Acknowledgments
 
-This project builds upon these excellent open-source tools and specifications:
-
-- [Excalidraw](https://excalidraw.com/) - Hand-drawn style whiteboard
-- [Mermaid](https://mermaid.js.org/) - Diagram and chart generation
-- [JSON Canvas](https://jsoncanvas.org/) - Open file format for infinite canvas (MIT License)
-- [Obsidian](https://obsidian.md/) - Knowledge base application
-- [Axton Liu](https://github.com/axtonliu) - Original author of [axton-obsidian-visual-skills](https://github.com/axtonliu/axton-obsidian-visual-skills)
+- [Axton Liu](https://github.com/axtonliu): original author of [axton-obsidian-visual-skills](https://github.com/axtonliu/axton-obsidian-visual-skills)
+- [Excalidraw](https://excalidraw.com/), [Mermaid](https://mermaid.js.org/), [JSON Canvas](https://jsoncanvas.org/), [Obsidian](https://obsidian.md/)
 
 ## License
 
-MIT License - see [LICENSE](LICENSE) for details.
-
-## Author
-
-**Sam Colmanetti** - [GitHub](https://github.com/samcolmanetti)
+MIT License, see [LICENSE](LICENSE). Maintained by [Sam Colmanetti](https://github.com/samcolmanetti).
