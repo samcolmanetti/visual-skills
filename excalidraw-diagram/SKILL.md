@@ -136,6 +136,7 @@ Choose the appropriate diagram type to maximize clarity and visual appeal.
 ### Text & Format
 - **All text elements must use** `fontFamily: 5` (Excalifont handwriting font)
 - **Double quotes in text**: escape as `\"` in JSON text fields
+- **Brackets must be ASCII**: use `(` `)` or `[` `]` only. Never use CJK/fullwidth bracket glyphs such as `「` `」`, `【` `】`, `（` `）`, `『` `』`, or `《` `》`. They render as foreign punctuation and look out of place in English diagrams.
 - **Font size rules** (hard minimums — below these values text is unreadable at normal zoom):
   - Title: 20-28px (minimum 20px)
   - Subtitle: 18-20px
@@ -367,6 +368,7 @@ Text elements (type: "text") require additional properties (do NOT include `rawT
 - **Arrow label overflow** — Long text labels (e.g., "ATP + NADPH") can exceed short arrows. Keep labels short or increase arrow length
 - **Insufficient contrast** — Light-colored text on a white background is nearly invisible. Text color must be no lighter than `#757575`; for colored text use dark variants
 - **Font size too small** — Below 14px text is unreadable at normal zoom; body text minimum is 16px
+- **Non-ASCII brackets**: Do not use `「」`, `【】`, `（）`, or other CJK/fullwidth bracket glyphs in text. Use ASCII `()` or `[]` only
 
 ## Implementation Notes
 
